@@ -2,6 +2,7 @@
 rm(list=ls())
 library('raster')
 library('sf')
+library('exactextractr')
 
 sessionInfo()
 
@@ -73,7 +74,13 @@ writeRaster(slope2015,'output_data/slope2015.tif',overwrite=T)
 writeRaster(fronts2015,'output_data/fronts2015.tif',overwrite=T)
 writeRaster(frontn2015,'output_data/frontn2015.tif',overwrite=T)
 
-plot(slope2015)
+
+#Get front areas
+results2015<-as.data.frame(t(exact_extract(fronts2015,study_site,'sum')))
+results2015$date<-dates
+results2015$ENSO<-'El Niño'
+
+
 #2020----------------
 #Carregando imagens
 sst<-stack('input_data/sst_2020_v3.tif')
@@ -126,3 +133,11 @@ plot(frontn2020)
 writeRaster(slope2020,'output_data/slope2020.tif',overwrite=T)
 writeRaster(fronts2020,'output_data/fronts2020.tif',overwrite=T)
 writeRaster(frontn2020,'output_data/frontn2020.tif',overwrite=T)
+
+#Get front areas
+results2020<-as.data.frame(t(exact_extract(fronts2020,study_site,'sum')))
+results2020$date<-dates
+results2020$ENSO<-'La Niña'
+
+save(slope2015,slope2020,fronts2015,fronts2020,results2015,results2020,file='output_data/fronts.Rda')
+
